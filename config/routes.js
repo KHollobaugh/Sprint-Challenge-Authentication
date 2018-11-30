@@ -2,13 +2,12 @@ const express = require('express');
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
-const jwt = require('jsonwebtoken');
 const db = require('../database/dbConfig');
 const server = express();
 
 server.use(express.json());
 server.use(cors());
-const { authenticate } = require('./middlewares');
+const { authenticate, generateToken } = require('./middlewares');
 
 module.exports = server => {
   server.post('/api/register', register);
@@ -18,7 +17,7 @@ module.exports = server => {
 
 function register(req, res) {
   // implement user registration
-  const cred = req.body;
+  const creds = req.body;
   const hash = bcrypt.hashSync(creds.password, 3);
   creds.password = hash;
   db('users')
